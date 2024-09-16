@@ -1,19 +1,50 @@
-import React, { useContext } from "react";
-import Input from "../input/Input";
-import Dropdown from "../dropdown/Dropdown";
-import { ItemContext } from "../../context/ItemContextProvider";
+import React, { useContext, useEffect } from "react";
+import Input from "../components/input/Input";
+import Dropdown from "../components/dropdown/Dropdown";
+import { ItemContext } from "../context/ItemContextProvider";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 
-const Form = () => {
+const Edit = () => {
   const { state, dispatch, items, setItems } = useContext(ItemContext);
+  let cpyItems = [...items];
+  const { id } = useParams();
+  const editItem = cpyItems[parseInt(id)];
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    if (editItem) {
+      dispatch({
+        type: "edit_item",
+        payload: {
+          name: editItem.name,
+          price: editItem.price,
+          quantity: editItem.quantity,
+          town: editItem.town,
+          payment_method: editItem.payment_method,
+        },
+      });
+    }
+
+    // console.log(state);
+  }, [id]);
+
+  const saveChanges = (e) => {
     e.preventDefault();
-    setItems([...items, state]);
 
-    console.log(state);
+    let newItems = [];
+
+    cpyItems[id] = state;
+
+    newItems = [cpyItems];
+
+    setItems(newItems);
+
+    console.log("new item", items);
+
+    navigate("/orders");
   };
   return (
-    <form onSubmit={(e) => handleSubmit(e)} className="flex flex-col gap-3">
+    <form onSubmit={(e) => saveChanges(e)} className="flex flex-col gap-3">
       <Input
         label={"Item Name: "}
         type={"text"}
@@ -57,10 +88,10 @@ const Form = () => {
         className="inline-block mx-auto w-1/2 py-2 px-3 rounded-full border-green-600 border-[1px] font-semibold hover:bg-green-600 hover:text-white duration-100"
         type="submit"
       >
-        Add to Cart
+        Save Changes
       </button>
     </form>
   );
 };
 
-export default Form;
+export default Edit;

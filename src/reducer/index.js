@@ -14,6 +14,15 @@ export const reducer = (state, action) => {
 
     case "payment":
       return { ...state, payment_method: action.payload };
+    case "edit_item":
+      return {
+        ...state,
+        name: action.payload.name,
+        price: action.payload.price,
+        quantity: action.payload.quantity,
+        town: action.payload.town,
+        payment_method: action.payload.payment_method,
+      };
 
     default:
       throw new Error();
